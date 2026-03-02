@@ -1,7 +1,7 @@
-# Segmentação de Clientes — Transportadora de Cargas Fracionadas
+# Segmentação de Clientes  Transportadora de Cargas Fracionadas
 
-**Case Técnico | Vaga Cientista de Dados**  
-**Período analisado:** Janeiro de 2026 (26 dias)
+**Case Técnico**  
+
 
 ---
 
@@ -10,10 +10,10 @@
 1. [Contexto do Problema](#1-contexto-do-problema)
 2. [Arquitetura do Projeto](#2-arquitetura-do-projeto)
 3. [Estrutura de Arquivos](#3-estrutura-de-arquivos)
-4. [Etapa 1 — Captação e Tratamento dos Dados](#4-etapa-1--captação-e-tratamento-dos-dados)
-5. [Etapa 2 — Análise Exploratória de Dados](#5-etapa-2--análise-exploratória-de-dados)
-6. [Etapa 3 — Ciclo 1 de Clusterização](#6-etapa-3--ciclo-1-de-clusterização)
-7. [Etapa 4 — Ciclo 2 de Clusterização](#7-etapa-4--ciclo-2-de-clusterização)
+4. [Etapa 1 - Captação e Tratamento dos Dados](#4-etapa-1--captação-e-tratamento-dos-dados)
+5. [Etapa 2 - Análise Exploratória de Dados](#5-etapa-2--análise-exploratória-de-dados)
+6. [Etapa 3 - Ciclo 1 de Clusterização](#6-etapa-3--ciclo-1-de-clusterização)
+7. [Etapa 4 - Ciclo 2 de Clusterização](#7-etapa-4--ciclo-2-de-clusterização)
 8. [Resultados Finais](#8-resultados-finais)
 9. [Decisões Técnicas e Justificativas](#9-decisões-técnicas-e-justificativas)
 10. [Limitações e Próximos Ciclos](#10-limitações-e-próximos-ciclos)
@@ -25,9 +25,9 @@
 
 A empresa opera no segmento de transporte de cargas fracionadas, modelo em que diferentes clientes compartilham o mesmo veículo em uma mesma rota. Nesse contexto, entender o perfil de uso de cada cliente é fundamental tanto para a gestão da capacidade operacional quanto para a definição de estratégias comerciais diferenciadas.
 
-O objetivo deste projeto é fazer a análise e segmentar a base de clientes com base em seu comportamento operacional,  frequência de uso, volume médio por envio, regularidade e perfil de carga — de modo a identificar grupos com características homogêneas que possam ser tratados de forma distinta pela área comercial e pela operação.
+O objetivo deste projeto é fazer uma análise e segmentar a base de clientes com base em seu comportamento operacional,  frequência de uso, volume médio por envio, regularidade e perfil de carga, de modo a identificar grupos com características homogêneas que possam ser tratados de forma distinta pela área comercial e pela operação.
 
-Os dados cobrem 26 dias de operação em janeiro de 2026, contemplando três fontes: cadastro de clientes, histórico de viagens com métricas de peso e volume, e classificação econômica por CNAE.
+Os dados cobrem 26 dias de operação em janeiro de 2026, contemplando três fontes: cadastro de clientes, histórico de viagens com métricas de peso e volume, e classificação econômica por CNAE de cada cliente cadastrado.
 
 ---
 
@@ -44,7 +44,7 @@ Arquivos CSV (origem)
         │
         ▼
 ┌─────────────────────────────────────┐
-│         PostgreSQL — Render         │
+│         PostgreSQL - Render         │
 │                                     │
 │  fato_volumetria   (1.048.575 reg)  │
 │  dim_cliente       (131.728 reg)    │
@@ -83,7 +83,7 @@ A escolha por um banco de dados relacional hospedado permite que os dados tratad
 └── README.md
 ```
 
-> O arquivo `database_config.yaml` não deve ser versionado. Usar `.gitignore` para excluí-lo do repositório.
+> O arquivo `database_config.yaml` não deve ser versionado. Usado `.gitignore` para excluí-lo do repositório.
 
 ---
 
@@ -97,7 +97,7 @@ Os dados foram fornecidos em três arquivos CSV separados por ponto e vírgula:
 
 | Arquivo | Registros | Colunas | Descrição |
 |---------|-----------|---------|-----------|
-| `cliente.csv` | 131.728 | 6 | Cadastro de clientes com UF, município e tipo de pessoa |
+| `cliente.csv` | 131.728 | 6 | Cadastro de clientes com UF, município e tipo |
 | `volumetria.csv` | 1.048.575 | 10 | Registros de viagem com peso, volume e CTes por cliente |
 | `cliente_cnae.csv` | 764.658 | 4 | CNAEs associados a cada cliente, com flag de CNAE principal |
 
@@ -105,7 +105,7 @@ Os dados foram fornecidos em três arquivos CSV separados por ponto e vírgula:
 
 Antes de qualquer transformação, foram verificados:
 
-- **Nulos:** nenhuma das três tabelas apresentou valores nulos nas colunas operacionais. A única exceção é o campo `cnae_descr`, que fica nulo para clientes sem CNAE cadastrado — comportamento esperado e tratado nas análises posteriores.
+- **Nulos:** nenhuma das três tabelas apresentou valores nulos nas colunas operacionais. A única exceção é o campo `cnae_descr`, que fica nulo para clientes sem CNAE cadastrado, comportamento esperado e tratado nas análises posteriores.
 - **Duplicatas:** zero registros duplicados em todas as tabelas.
 - **Valores categóricos:** os campos `cli_fisjur` (F/J), `tipopesocubico` (M/P) e `cne_cnae_principal` (0/1) apresentaram apenas os valores esperados, sem inconsistências.
 
@@ -128,9 +128,9 @@ Os nomes das colunas foram padronizados em todas as tabelas: minúsculas, sem es
 
 As três tabelas foram carregadas no PostgreSQL com tipagem explícita via SQLAlchemy:
 
-- `dim_cliente` — dimensão de clientes com chave primária em `cli_codigo`
-- `dim_cliente_cnae` — dimensão de CNAEs com referência a `cli_codigo`
-- `fato_volumetria` — tabela fato com os registros de viagem
+- `dim_cliente` - dimensão de clientes com chave primária em `cli_codigo`
+- `dim_cliente_cnae` - dimensão de CNAEs com referência a `cli_codigo`
+- `fato_volumetria` - tabela fato com os registros de viagem
 
 Após a carga, foram criados índice em `cli_codigo` na tabela fato para otimizar os JOINs realizados no notebook de análise.
 
@@ -138,7 +138,7 @@ Após a carga, foram criados índice em `cli_codigo` na tabela fato para otimiza
 
 ## 5. Etapa 2 — Análise Exploratória de Dados
 
-**Notebook:** `02_analise_clientes_final.ipynb` — Parte 1
+**Notebook:** `02_analise_clientes_final.ipynb` - Parte 1
 
 A EDA foi conduzida sobre a visão consolidada das três tabelas, extraída via query com JOIN no banco. O dataset resultante contém 1.093.129 registros e 84.491 clientes únicos ativos no período.
 
@@ -161,15 +161,15 @@ A operação é concentrada nos dias úteis, com queda expressiva nos finais de 
 
 - **Tipo de pessoa:** a grande maioria da base é composta por Pessoas Jurídicas. Clientes PF existem, mas representam parcela menor e com volumes operacionais menores.
 - **Distribuição geográfica:** SC, PR, RS e SP concentram a maior parte dos clientes ativos e das viagens, refletindo a área de atuação principal da transportadora.
-- **Segmento econômico:** os CNAEs mais frequentes envolvem comércio varejista e atacadista de peças automotivas, confecções e equipamentos agrícolas — setores com alta demanda por transporte fracionado regular.
+- **Segmento econômico:** os CNAEs mais frequentes envolvem comércio varejista e atacadista de peças automotivas, confecções e equipamentos agrícolas, setores com alta demanda por transporte fracionado regular.
 
 ### 5.4 Métricas operacionais
 
 As distribuições de peso, volume e CTes são fortemente assimétricas (skewed right). A mediana de peso por registro é de 10 kg, mas o máximo ultrapassa 16.000 kg. Essa assimetria é estrutural do negócio: a maioria das notas é de pequenos envios, mas alguns clientes movimentam volumes excepcionalmente grandes.
 
-O campo `tipopesocubico` revelou que 88% dos registros são do tipo **P** (peso real > peso cubado), indicando predominância de cargas densas. Os 12% do tipo **M** (cubado predomina) correspondem a mercadorias leves e volumosas, para as quais o frete é calculado pelo volume — dado relevante para a área de precificação.
+O campo `tipopesocubico` revelou que 88% dos registros são do tipo **P** (peso real > peso cubado), indicando predominância de cargas densas. Os 12% do tipo **M** (cubado predomina) correspondem a mercadorias leves e volumosas, para as quais o frete é calculado pelo volume, dado relevante para a área de precificação.
 
-### 5.5 Concentração por cliente — Curva de Pareto
+### 5.5 Concentração por cliente, Curva de Pareto
 
 **5,7% dos clientes concentram 80% do peso total transportado.**
 
@@ -179,23 +179,23 @@ Essa concentração é característica do mercado B2B de carga fracionada: indú
 
 Com base na EDA, quatro hipóteses guiaram a construção do modelo de segmentação:
 
-**H1 — Concentração na cauda longa:** segmentação por totais absolutos separa gigantes do restante, sem gerar grupos úteis.
+**H1 Concentração na cauda longa:** segmentação por totais absolutos separa gigantes do restante, sem gerar grupos úteis.
 
-**H2 — Sazonalidade semanal:** a operação segue ciclo semanal claro; a regularidade do cliente dentro desse ciclo é uma dimensão comportamental relevante.
+**H2 Sazonalidade semanal:** a operação segue ciclo semanal claro; a regularidade do cliente dentro desse ciclo é uma dimensão comportamental relevante.
 
-**H3 — Cubagem como proxy de tipo de mercadoria:** a proporção de cargas tipo M por cliente captura indiretamente o setor econômico e o perfil logístico da mercadoria.
+**H3 Cubagem como proxy de tipo de mercadoria:** a proporção de cargas tipo M por cliente captura indiretamente o setor econômico e o perfil logístico da mercadoria.
 
-**H4 — Grupos comportamentais latentes:** a variabilidade observada em frequência, peso por envio e recência sugere subgrupos com padrões de uso distintos que não são capturados por segmentações simples.
+**H4 Grupos comportamentais latentes:** a variabilidade observada em frequência, peso por envio e recência sugere subgrupos com padrões de uso distintos que não são capturados por segmentações simples.
 
 ---
 
-## 6. Etapa 3 — Ciclo 1 de Clusterização
+## 6. Etapa 3 Ciclo 1 de Clusterização
 
 **Notebook:** `02_analise_clientes_final.ipynb` — Parte 2
 
 ### 6.1 Abordagem
 
-O primeiro ciclo utilizou KMeans com as features de totais agregados por cliente — `total_viagens`, `total_ctes`, `total_volumes`, `total_peso`, `total_m3` e `media_perc_desc` — normalizadas via `StandardScaler`. O objetivo desta etapa foi estabelecer uma linha de base e identificar os problemas antes de partir para uma abordagem mais refinada.
+O primeiro ciclo utilizou KMeans com as features de totais agregados por cliente - `total_viagens`, `total_ctes`, `total_volumes`, `total_peso`, `total_m3` e `media_perc_desc` - normalizadas via `StandardScaler`. O objetivo desta etapa foi estabelecer uma linha de base e identificar os problemas antes de partir para uma abordagem mais refinada.
 
 ### 6.2 Avaliação
 
@@ -218,19 +218,19 @@ Com k=2:
 
 Praticamente toda a base ficou em um único grupo. Dois problemas estruturais causaram esse resultado:
 
-**Problema 1 — Distribuição assimétrica não tratada**
+**Problema 1 - Distribuição assimétrica não tratada**
 
 O `StandardScaler` centraliza e escala os dados, mas não corrige a assimetria. Com mediana de `total_viagens` em 3 e máximo em 1.703, os outliers continuam dominando o espaço vetorial. Como o KMeans minimiza distâncias euclidianas, os centroides são puxados em direção aos valores extremos, e o restante da base fica agrupado em torno de um único centroide distante.
 
-**Problema 2 — Features apenas de volume absoluto**
+**Problema 2 - Features apenas de volume absoluto**
 
 Usar totais absolutos faz com que a clusterização separe clientes pelo tamanho, não pelo comportamento. Dois clientes com volumes similares podem ter perfis operacionais completamente diferentes: um com muitas viagens pequenas e diárias, outro com poucas viagens mas cargas esporádicas e pesadas.
 
 ---
 
-## 7. Etapa 4 — Ciclo 2 de Clusterização
+## 7. Etapa 4 - Ciclo 2 de Clusterização
 
-**Notebook:** `02_analise_clientes_final.ipynb` — Parte 3
+**Notebook:** `02_analise_clientes_final.ipynb` - Parte 3
 
 ### 7.1 Decisões de melhoria
 
@@ -268,7 +268,7 @@ Foram criadas sete variáveis derivadas que capturam o *padrão de uso* do clien
 
 #### Tratamento de outliers extremos
 
-Os 422 clientes acima do percentil 99,5 em peso total foram separados antes do `fit`. Isso preserva a qualidade dos centroides, que são calculados sobre a distribuição principal da base. Após o fit, esses clientes foram classificados com `predict` usando o modelo treinado — eles recebem um cluster, mas não influenciam sua definição.
+Os 422 clientes acima do percentil 99,5 em peso total foram separados antes do `fit`. Isso preserva a qualidade dos centroides, que são calculados sobre a distribuição principal da base. Após o fit, esses clientes foram classificados com `predict` usando o modelo treinado - eles recebem um cluster, mas não influenciam sua definição.
 
 ### 7.2 Avaliação com três métricas
 
@@ -302,14 +302,14 @@ Os 422 clientes acima do percentil 99,5 em peso total foram separados antes do `
 | CTes por viagem | 1,0 | 1,0 | — |
 | Peso por CTe (kg) | 42,5 | 0,72 | — |
 
-**Cluster 0 — Clientes Regulares de Médio Porte (37,3%)**  
+**Cluster 0 - Clientes Regulares de Médio Porte (37,3%)**  
 Frequência e peso intermediários, presença consistente ao longo do período. São o grupo com maior previsibilidade operacional. Representam a espinha dorsal da receita recorrente da transportadora. CNAEs predominantes: comércio varejista e atacadista de peças automotivas e confecções.
 
-**Cluster 1 — Clientes Estratégicos de Alto Volume (6,2%)**  
+**Cluster 1 - Clientes Estratégicos de Alto Volume (6,2%)**  
 Frequência diária elevada, peso total alto, muitos CTes por viagem. Apesar de pequeno em número, este grupo concentra o grosso do volume transportado. Exigem atenção comercial dedicada e SLA diferenciado.
 
-**Cluster 2 — Clientes Esporádicos de Baixo Volume (56,5%)**  
-Maior parcela da base em número, mas com baixo peso por envio e recência alta — boa parte enviou no início do período e não retornou. Representam potencial de crescimento via programas de fidelização ou reativação.
+**Cluster 2 - Clientes Esporádicos de Baixo Volume (56,5%)**  
+Maior parcela da base em número, mas com baixo peso por envio e recência alta - boa parte enviou no início do período e não retornou. Representam potencial de crescimento via programas de fidelização ou reativação.
 
 ### 8.3 Output salvo no banco
 
@@ -335,25 +335,23 @@ A tabela `clientes_segmentados` foi criada no PostgreSQL com `cli_codigo`, `clus
 
 ### Limitações do ciclo atual
 
-**Período curto:** 26 dias de dados limitam a resolução das métricas de recência e regularidade. Um cliente que enviou apenas uma vez pode ser esporádico ou pode ter iniciado o relacionamento no final do período — não é possível distinguir com uma janela tão pequena.
+**Período curto:** 26 dias de dados limitam a resolução das métricas de recência e regularidade. Um cliente que enviou apenas uma vez pode ser esporádico ou pode ter iniciado o relacionamento no final do período - não é possível distinguir com uma janela tão pequena.
 
 **Ausência do valor do frete:** sem informação de receita por viagem, a segmentação é inteiramente baseada em volume operacional. Um cliente de alto volume pode ter margens baixas, e um cliente de baixo volume pode ser altamente rentável.
 
-**CNAEs nulos:** 19.061 registros sem CNAE cadastrado (22,5% da base) limitam o enriquecimento por setor econômico.
-
 ### Próximos ciclos sugeridos
 
-**Ciclo 3 — Incorporar valor do frete**  
+**Ciclo 3 - Incorporar valor do frete**  
 Com dados de receita por viagem, seria possível construir uma segmentação por rentabilidade. Features como receita por kg, margem por viagem e ticket médio por CTe permitiriam identificar clientes estratégicos por valor financeiro, não apenas por volume.
 
-**Ciclo 4 — Ampliar janela temporal**  
+**Ciclo 4 - Ampliar janela temporal**  
 Com três meses ou mais de dados, métricas de sazonalidade mensal, churn potencial (clientes que pararam de enviar) e variação de frequência entre períodos tornam-se calculáveis e mais robustas.
 
-**Ciclo 5 — Modelo de propensão ao churn**  
+**Ciclo 5 - Modelo de propensão ao churn**  
 O Cluster 2 (esporádicos com alta recência) é o candidato natural para um modelo de risco de abandono. Com dados históricos de clientes que de fato deixaram de operar, seria possível treinar um classificador supervisionado.
 
-**Ciclo 6 — Segmentação hierárquica**  
-Dentro do Cluster 1 (estratégicos), uma segunda rodada de clusterização pode revelar subtipos com necessidades operacionais diferentes — por exemplo, indústrias com fluxo diário versus distribuidores com picos semanais.
+**Ciclo 6 - Segmentação hierárquica**  
+Dentro do Cluster 1 (estratégicos), uma segunda rodada de clusterização pode revelar subtipos com necessidades operacionais diferentes - por exemplo, indústrias com fluxo diário versus distribuidores com picos semanais.
 
 ---
 
@@ -403,8 +401,7 @@ jupyter nbconvert --to notebook --execute 02_analise_clientes_final.ipynb
 
 Os notebooks também podem ser executados célula a célula via Jupyter Lab ou VS Code.
 
-O notebook `02_analise_clientes_final.ipynb` tem uma variável `conect_db` no início. Quando `True`, conecta ao banco e executa a query. Quando `False`, carrega os dados de um CSV local previamente salvo — útil para reexecuções sem depender da conexão.
+O notebook `02_analise_clientes_final.ipynb` tem uma variável `conect_db` no início. Quando `True`, conecta ao banco e executa a query. Quando `False`, carrega os dados de um CSV local previamente salvo - útil para reexecuções sem depender da conexão.
 
 ---
 
-*Projeto desenvolvido como case técnico para processo seletivo de Cientista de Dados.*
