@@ -87,7 +87,7 @@ A escolha por um banco de dados relacional hospedado permite que os dados tratad
 
 ---
 
-## 4. Etapa 1 — Captação e Tratamento dos Dados
+## 4. Etapa 1 - Captação e Tratamento dos Dados
 
 **Notebook:** `01_tratamento_insert.ipynb`
 
@@ -136,7 +136,7 @@ Após a carga, foram criados índice em `cli_codigo` na tabela fato para otimiza
 
 ---
 
-## 5. Etapa 2 — Análise Exploratória de Dados
+## 5. Etapa 2 - Análise Exploratória de Dados
 
 **Notebook:** `02_analise_clientes_final.ipynb` - Parte 1
 
